@@ -176,11 +176,11 @@ function importFromJsonFile(event) {
 
 // === Server Sync ===
 function startServerSync() {
-  syncInterval = setInterval(fetchServerQuotes, 60000); // every 60s
-  fetchServerQuotes(); // initial call
+  syncInterval = setInterval(fetchQuotesFromServer, 60000); // every 60s
+  fetchQuotesFromServer(); // initial call
 }
 
-function fetchServerQuotes() {
+function fetchQuotesFromServer() {
   fetch(SERVER_URL)
     .then(res => res.json())
     .then(data => {
