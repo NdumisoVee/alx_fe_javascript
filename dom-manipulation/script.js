@@ -153,8 +153,12 @@ function exportToJsonFile() {
 }
 
 function importFromJsonFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
   const reader = new FileReader();
-  reader.onload = function(e) {
+
+  reader.onload = async function(e) {
     try {
       const imported = JSON.parse(e.target.result);
       if (!Array.isArray(imported)) throw new Error("Invalid format");
@@ -171,7 +175,8 @@ function importFromJsonFile(event) {
       showNotification("Import failed: " + err.message);
     }
   };
-  reader.readAsText(event.target.files[0]);
+
+  reader.readAsText(file);
 }
 
 // === Server Sync ===
@@ -180,24 +185,25 @@ function startServerSync() {
   fetchQuotesFromServer(); // initial call
 }
 
-function fetchQuotesFromServer() {
-  fetch(SERVER_URL)
-    .then(res => res.json())
-    .then(data => {
-      const serverQuotes = data.slice(0, 10).map(post => ({
-        text: post.title,
-        category: "Server"
-      }));
+// ✅ Renamed function as requested
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch(SERVER_URL);
+    const data = await response.json();
 
-      handleSync(serverQuotes);
-    })
-    .catch(err => {
-      console.error("Sync failed:", err);
-      showNotification("Failed to sync with server.");
-    });
+    const serverQuotes = data.slice(0, 10).map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    await handleSync(serverQuotes);
+  } catch (error) {
+    console.error("Sync failed:", error);
+    showNotification("Failed to sync with server.");
+  }
 }
 
-function handleSync(serverQuotes) {
+async function handleSync(serverQuotes) {
   const local = JSON.parse(localStorage.getItem("quotes") || "[]");
   let updated = false;
 
