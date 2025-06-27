@@ -25,5 +25,17 @@
     <div id="addQuoteFormContainer"></div>
 
     <script src="script.js"></script>
+
+    <!-- JSON Import/Export Section -->
+    <h3>Import / Export Quotes</h3>
+    <div>
+      <input
+        type="file"
+        id="importFile"
+        accept=".json"
+        onchange="importFromJsonFile(event)"
+      />
+      <button onclick="exportToJsonFile()">Export Quotes</button>
+    </div>
   </body>
 </html>

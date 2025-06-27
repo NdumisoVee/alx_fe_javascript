@@ -1,14 +1,32 @@
-let quotes = [
-  { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivational" },
-  { text: "Life is what happens when you're busy making other plans.", category: "Life" },
-  { text: "Success is not in what you have, but who you are.", category: "Success" }
-];
+let quotes = [];
 
+// DOM references
 const quoteDisplay = document.getElementById("quoteDisplay");
 const newQuoteButton = document.getElementById("newQuote");
 const categorySelect = document.getElementById("categorySelect");
 const addQuoteFormContainer = document.getElementById("addQuoteFormContainer");
 
+// === Web Storage Functions ===
+function saveQuotes() {
+  localStorage.setItem("quotes", JSON.stringify(quotes));
+}
+
+function loadQuotes() {
+  const storedQuotes = localStorage.getItem("quotes");
+  if (storedQuotes) {
+    quotes = JSON.parse(storedQuotes);
+  } else {
+    // Default starter quotes
+    quotes = [
+      { text: "The only limit to our realization of tomorrow is our doubts of today.", category: "Motivational" },
+      { text: "Life is what happens when you're busy making other plans.", category: "Life" },
+      { text: "Success is not in what you have, but who you are.", category: "Success" }
+    ];
+    saveQuotes();
+  }
+}
+
+// === Quote Display Functions ===
 function populateCategories() {
   const categories = [...new Set(quotes.map(q => q.category))];
   categorySelect.innerHTML = `<option value="all">All</option>`;
@@ -32,10 +50,14 @@ function showRandomQuote() {
   }
 
   const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
-  quoteDisplay.textContent = `"${filteredQuotes[randomIndex].text}" — ${filteredQuotes[randomIndex].category}`;
+  const quote = filteredQuotes[randomIndex];
+  quoteDisplay.textContent = `"${quote.text}" — ${quote.category}`;
+
+  // Save to session storage
+  sessionStorage.setItem("lastQuote", JSON.stringify(quote));
 }
 
-// ✅ Dynamically create form and add it to the DOM
+// === Add Quote Form ===
 function createAddQuoteForm() {
   const formTitle = document.createElement("h3");
   formTitle.textContent = "Add a New Quote";
@@ -73,16 +95,67 @@ function addQuote() {
   }
 
   quotes.push({ text, category });
-  populateCategories(); // Refresh dropdown
+  saveQuotes(); // Save to localStorage
+  populateCategories(); // Update dropdown
+
   document.getElementById("newQuoteText").value = "";
   document.getElementById("newQuoteCategory").value = "";
+
   alert("Quote added successfully!");
+}
+
+// === JSON Import/Export ===
+function exportToJsonFile() {
+  const dataStr = JSON.stringify(quotes, null, 2);
+  const blob = new Blob([dataStr], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "quotes.json";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function importFromJsonFile(event) {
+  const fileReader = new FileReader();
+  fileReader.onload = function(e) {
+    try {
+      const importedQuotes = JSON.parse(e.target.result);
+
+      // Basic validation
+      if (Array.isArray(importedQuotes)) {
+        importedQuotes.forEach(quote => {
+          if (quote.text && quote.category) {
+            quotes.push(quote);
+          }
+        });
+        saveQuotes();
+        populateCategories();
+        alert("Quotes imported successfully!");
+      } else {
+        throw new Error("Invalid JSON structure");
+      }
+    } catch (error) {
+      alert("Failed to import quotes: " + error.message);
+    }
+  };
+  fileReader.readAsText(event.target.files[0]);
+}
+
+// === Initial App Setup ===
+loadQuotes();
+populateCategories();
+showRandomQuote();
+createAddQuoteForm();
+
+// Optional: Load last session quote
+const lastQuote = sessionStorage.getItem("lastQuote");
+if (lastQuote) {
+  const parsed = JSON.parse(lastQuote);
+  quoteDisplay.textContent = `"${parsed.text}" — ${parsed.category}`;
 }
 
 newQuoteButton.addEventListener("click", showRandomQuote);
 categorySelect.addEventListener("change", showRandomQuote);
-
-// Initial setup
-populateCategories();
-showRandomQuote();
-createAddQuoteForm(); // Call to generate the form dynamically
