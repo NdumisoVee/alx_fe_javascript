@@ -2,48 +2,57 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dynamic Quote Generator</title>
   </head>
   <body>
     <h1>Dynamic Quote Generator</h1>
 
-    <!-- Category Selector -->
-    <div>
-      <label for="categorySelect">Choose Category:</label>
-      <select id="categorySelect">
-        <option value="all">All</option>
-      </select>
-    </div>
+    <!-- Random Quote Display -->
+    <div id="quoteDisplay"></div>
+    <button id="newQuote">Show New Quote</button>
 
+    <!-- Category Selection for Random Quotes -->
+    <h3>Random Quote Category</h3>
+    <select id="categorySelect">
+      <option value="all">All Categories</option>
+    </select>
+
+    <!-- Category Filter for Viewing Multiple Quotes -->
     <h3>Filter Quotes by Category</h3>
     <select id="categoryFilter" onchange="filterQuotes()">
       <option value="all">All Categories</option>
-      <!-- Populated dynamically -->
     </select>
-
     <div id="filteredQuotes"></div>
 
-    <!-- Display Quote -->
-    <div id="quoteDisplay" style="margin: 20px 0; font-size: 1.2em"></div>
-    <button id="newQuote">Show New Quote</button>
-
-    <!-- Add New Quote -->
-    <h3>Add a New Quote</h3>
+    <!-- Add Quote Form (injected via JS) -->
     <div id="addQuoteFormContainer"></div>
 
-    <script src="script.js"></script>
-
-    <!-- JSON Import/Export Section -->
+    <!-- JSON Import / Export -->
     <h3>Import / Export Quotes</h3>
-    <div>
-      <input
-        type="file"
-        id="importFile"
-        accept=".json"
-        onchange="importFromJsonFile(event)"
-      />
-      <button onclick="exportToJsonFile()">Export Quotes</button>
-    </div>
+    <input
+      type="file"
+      id="importFile"
+      accept=".json"
+      onchange="importFromJsonFile(event)"
+    />
+    <button onclick="exportToJsonFile()">Export Quotes</button>
+
+    <!-- Sync Button -->
+    <h3>Server Sync</h3>
+    <button onclick="fetchServerQuotes()">Sync Now</button>
+
+    <!-- Notifications -->
+    <div
+      id="notification"
+      style="
+        background-color: yellow;
+        padding: 10px;
+        display: none;
+        margin-top: 10px;
+      "
+    ></div>
+
+    <script src="script.js"></script>
   </body>
 </html>
