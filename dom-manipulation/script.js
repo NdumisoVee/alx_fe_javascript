@@ -138,7 +138,7 @@ function addQuote() {
   document.getElementById("newQuoteCategory").value = "";
 
   showNotification("Quote added!");
-  postQuoteToServer(newQuote); // ✅ Send to server
+  postQuoteToServer(newQuote); // Send to server
 }
 
 // === JSON Import/Export ===
@@ -240,11 +240,10 @@ async function handleSync(serverQuotes) {
     saveQuotes();
     populateCategories();
     filterQuotes();
-    showNotification("Quotes synced from server.");
+    showNotification("Quotes synced with server!");
   }
 }
 
-// ✅ Wrapper function expected by your validator
 async function syncQuotes() {
   await fetchQuotesFromServer();
   if (quotes.length > 0) {
