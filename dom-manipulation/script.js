@@ -73,10 +73,10 @@ function showRandomQuote() {
 }
 
 function filterQuotes() {
-  const selected = categoryFilter.value;
-  localStorage.setItem("lastCategoryFilter", selected);
+  const selectedCategory = categoryFilter.value;
+  localStorage.setItem("lastCategoryFilter", selectedCategory);
 
-  const filtered = selected === "all" ? quotes : quotes.filter(q => q.category === selected);
+  const filtered = selectedCategory === "all" ? quotes : quotes.filter(q => q.category === selectedCategory);
   filteredQuotesDiv.innerHTML = "";
 
   if (filtered.length === 0) {
