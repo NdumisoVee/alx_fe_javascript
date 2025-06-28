@@ -185,7 +185,7 @@ function startServerSync() {
   fetchQuotesFromServer(); // initial call
 }
 
-// ✅ Renamed function as requested
+
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_URL);
@@ -206,6 +206,26 @@ async function fetchQuotesFromServer() {
 async function handleSync(serverQuotes) {
   const local = JSON.parse(localStorage.getItem("quotes") || "[]");
   let updated = false;
+
+async function postQuoteToServer(quote) {
+  try {
+    const response = await fetch(SERVER_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(quote)
+    });
+
+    const data = await response.json();
+    console.log("Posted to server:", data);
+    showNotification("Quote sent to server.");
+  } catch (error) {
+    console.error("Failed to post quote:", error);
+    showNotification("Failed to post quote to server.");
+  }
+}
+
 
   serverQuotes.forEach(sq => {
     const exists = local.some(lq => lq.text === sq.text && lq.category === sq.category);
